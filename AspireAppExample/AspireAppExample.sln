@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireAppExample.Web", "src\AspireAppExample.Web\AspireAppExample.Web.csproj", "{EE6F6089-CB8C-478C-B48F-2B560359B429}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A90C26BA-9D35-42E6-80BA-2BE64957D5A8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "aspire", "aspire", "{EAC21F6A-E7CE-4594-973F-8D7AA8C47EBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireAppExample.Core", "AspireAppExample.Core\AspireAppExample.Core.csproj", "{6CBE6754-13DD-4CCD-A427-C981C3287B4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{498A604A-D8A9-4349-BA1D-C1E18BC85044}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{498A604A-D8A9-4349-BA1D-C1E18BC85044}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{498A604A-D8A9-4349-BA1D-C1E18BC85044}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CBE6754-13DD-4CCD-A427-C981C3287B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CBE6754-13DD-4CCD-A427-C981C3287B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CBE6754-13DD-4CCD-A427-C981C3287B4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CBE6754-13DD-4CCD-A427-C981C3287B4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,5 +52,6 @@ Global
 		{410647D1-ED7B-421E-973B-A5033440D3F6} = {A90C26BA-9D35-42E6-80BA-2BE64957D5A8}
 		{EA040307-8FC5-4A96-8911-27EE113E3FC6} = {EAC21F6A-E7CE-4594-973F-8D7AA8C47EBD}
 		{498A604A-D8A9-4349-BA1D-C1E18BC85044} = {EAC21F6A-E7CE-4594-973F-8D7AA8C47EBD}
+		{6CBE6754-13DD-4CCD-A427-C981C3287B4E} = {A90C26BA-9D35-42E6-80BA-2BE64957D5A8}
 	EndGlobalSection
 EndGlobal

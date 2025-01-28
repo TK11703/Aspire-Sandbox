@@ -1,5 +1,6 @@
-using AspireAppExample.Web;
+using AspireAppExample.Web.Clients;
 using AspireAppExample.Web.Components;
+using AspireAppExample.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +13,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddOutputCache();
 
-builder.Services.AddHttpClient<WeatherApiClient>(client =>
-    {
-        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-        client.BaseAddress = new("https+http://apiservice");
-    });
+builder.Services.ConfigureClients(builder.Configuration);
 
 var app = builder.Build();
 
