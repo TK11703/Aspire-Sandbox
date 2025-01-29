@@ -9,6 +9,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
+builder.Services.AddHealthChecks();
+
 //Registers the endpoints that implement the IEndpoint interface
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
@@ -16,6 +18,10 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+app.UseStatusCodePages();
+
+app.MapHealthChecks("/_health");
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();

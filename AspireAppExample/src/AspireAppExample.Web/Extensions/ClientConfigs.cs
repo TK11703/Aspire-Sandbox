@@ -12,13 +12,13 @@ internal static class ClientConfigs
     /// <param name="config"></param>
     public static void ConfigureClients(this IServiceCollection services, ConfigurationManager config)
     {
+        // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+        // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
         //Aspire will handle the translation of the APISERVICE to the correct URL for the API registered for it.
         Uri baseUri = new("https+http://apiservice");
 
         services.AddHttpClient<WeatherApiClient>(client =>
         {
-            // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
-            // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
             client.BaseAddress = new(baseUri, "/weather/");
         })
         .ConfigurePrimaryHttpMessageHandler(() =>
@@ -30,6 +30,17 @@ internal static class ClientConfigs
         })
         .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
 
-
+        services.AddHttpClient<LoggingApiClient>(client =>
+        {
+            client.BaseAddress = new(baseUri, "/logging/");
+        })
+        .ConfigurePrimaryHttpMessageHandler(() =>
+        {
+            return new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(5)
+            };
+        })
+        .SetHandlerLifetime(Timeout.InfiniteTimeSpan);
     }
 }

@@ -1,0 +1,195 @@
+﻿@page "/logging"
+@using AspireAppExample.Web.Clients
+@using AspireAppExample.Core.Entities
+@using Microsoft.Extensions.Caching.Memory
+@rendermode InteractiveServer
+@inject IMemoryCache cache
+@inject LoggingApiClient loggingClient
+@inject ILogger<Logging> logger
+
+<PageTitle>Logging</PageTitle>
+
+<h1>Logging</h1>
+
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Log Type</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="align-middle">
+						<td>Throw Exception (Local/Handled)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="ThrowLocalExceptionHandled">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Throw Exception (Local/Unhandled)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="ThrowLocalExceptionUnhandled">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Throw Exception (Remote/Handled)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="ThrowRemoteExceptionHandled">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Throw Exception (Remote/Unhandled)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="ThrowRemoteExceptionUnhandled">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Log Info (Local)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="LocallyLogInformation">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Log Info (Remote)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="RemotelyLogInformation">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Log Warning Message (Local)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="LocallyLogWarning">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Log Warning Message (Remote)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="RemotelyLogWarning">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Log Handled Error (Local)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="LocallyLogError">Go</button></td>
+					</tr>
+					<tr class="align-middle">
+						<td>Log Handled Error (Remote)</td>
+						<td><button class="btn btn-secondary btn-sm" @onclick="RemotelyLogError">Go</button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="col">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Performed On</th>
+						<th>Log Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var logAction in logActions)
+					{
+						<tr>
+							<td>@logAction.actionTS</td>
+							<td>@logAction.actionRequested</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	private List<LogAction> logActions = new List<LogAction>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		if (!cache.TryGetValue(CacheKeys.SavedLogs, out List<LogAction>? cachedLogs))
+		{
+			logActions = new List<LogAction>();
+
+			var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
+
+			cache.Set(CacheKeys.SavedLogs, logActions, cacheEntryOptions);
+		}
+		if (cachedLogs == null)
+		{
+			logActions = new List<LogAction>();
+		}
+		else
+		{
+			logActions = cachedLogs;
+		}
+	}
+
+	private void ThrowLocalExceptionHandled()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Throw Exception (Local/Handled)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		try
+		{
+			int result = 0;
+			//Will trigger a divide by zero exception and it is not handled by design for logging purposes.
+			result = 1 / result;
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex.Message);
+		}
+	}
+
+	private void ThrowLocalExceptionUnhandled()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Throw Exception (Local/Unhandled)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		int result = 0;
+		//Will trigger a divide by zero exception and it is not handled by design for logging purposes.
+		result = 1 / result;
+	}
+
+	private async Task ThrowRemoteExceptionHandled()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Throw Exception (Remote/Handled)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		await loggingClient.TriggerRemoteExceptionHandled();
+	}
+
+	private async Task ThrowRemoteExceptionUnhandled()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Throw Exception (Remote/Unhandled)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		await loggingClient.TriggerRemoteExceptionUnhandled();
+	}
+
+	private void LocallyLogInformation()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Log Information (Local)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		logger.LogInformation("This is an information log.");
+	}
+
+	private async Task RemotelyLogInformation()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Log Information (Remote)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		await loggingClient.TriggerRemoteInformation();
+	}
+
+	private void LocallyLogWarning()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Log Warning (Local)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		logger.LogWarning("This is an warning log.");
+	}
+
+	private async Task RemotelyLogWarning()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Log Warning (Remote)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		await loggingClient.TriggerRemoteWarning();
+	}
+
+	private void LocallyLogError()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Log Error (Local)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		logger.LogError("This is an error log.");
+	}
+
+	private async Task RemotelyLogError()
+	{
+		logActions.Add(new LogAction(DateTime.Now, "Log Error (Remote)"));
+		cache.Set(CacheKeys.SavedLogs, logActions);
+		await loggingClient.TriggerRemoteError();		
+	}
+}

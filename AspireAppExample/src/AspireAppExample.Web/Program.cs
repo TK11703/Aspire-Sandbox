@@ -1,6 +1,6 @@
-using AspireAppExample.Web.Clients;
 using AspireAppExample.Web.Components;
 using AspireAppExample.Web.Extensions;
+using AspireAppExample.Web.Health;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,11 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddHealthChecks()
+    .AddCheck<ApiHealthCheck>("api");
+
 builder.Services.AddOutputCache();
+builder.Services.AddMemoryCache();
 
 builder.Services.ConfigureClients(builder.Configuration);
 
@@ -25,6 +29,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapHealthChecks("/_health");
 
 app.UseAntiforgery();
 
