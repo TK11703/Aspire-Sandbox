@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\AspireAppExample.Core\AspireAppExample.Core.csproj" />
     <ProjectReference Include="..\..\aspire\AspireAppExample.ServiceDefaults\AspireAppExample.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\AspireAppExample.Core\AspireAppExample.Core.csproj" />
   </ItemGroup>
 
 </Project>
